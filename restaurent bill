@@ -1,0 +1,78 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Display menu
+        String[] menuItems = {"Mutton Biriyani", "Chicken Biriyani", "Parotta", "Egg rice", "Chicken rice", "Goli Soda"};
+        double[] prices = {450.0, 250.0, 20.0, 80.0, 80.0, 30.0};
+
+        // Tax rates
+        final double SERVICE_TAX_RATE = 0.5; // 10%
+        final double GST_RATE = 0.18; // 5%
+
+        System.out.println("Welcome to the Restaurant!");
+        System.out.println("Menu:");
+        for (int i = 0; i < menuItems.length; i++) {
+            System.out.printf("%d. %s - %.2f%n", i + 1, menuItems[i], prices[i]);
+        }
+
+        // Taking orders
+        System.out.print("Enter the number of items you want to order: ");
+        int itemCount = scanner.nextInt();
+        String[] orderedItems = new String[itemCount];
+        int[] quantities = new int[itemCount];
+        double[] itemTotals = new double[itemCount];
+
+        double subtotal = 0.0;
+
+        for (int i = 0; i < itemCount; i++) {
+            System.out.printf("Enter the item number for item %d: ", i + 1);
+            int itemNumber = scanner.nextInt() - 1;
+            if (itemNumber < 0 || itemNumber >= menuItems.length) {
+                System.out.println("Invalid item number. Try again.");
+                i--;
+                continue;
+            }
+
+            System.out.printf("Enter the quantity of %s: ", menuItems[itemNumber]);
+            int quantity = scanner.nextInt();
+
+            orderedItems[i] = menuItems[itemNumber];
+            quantities[i] = quantity;
+            itemTotals[i] = prices[itemNumber] * quantity;
+
+            subtotal += itemTotals[i];
+        }
+
+        // Calculate taxes and total
+        double serviceTax = subtotal * SERVICE_TAX_RATE;
+        double gst = subtotal * GST_RATE;
+        double total = subtotal + serviceTax + gst;
+
+        // Print the bill
+        System.out.println("\n--- BILL ---");
+        System.out.println("Item\t\tQty\tPrice\tTotal");
+        for (int i = 0; i < itemCount; i++) {
+            System.out.printf("%-10s\t%d\t₹%.2f\t₹%.2f%n", orderedItems[i], quantities[i], prices[getItemIndex(orderedItems[i], menuItems)], itemTotals[i]);
+        }
+        System.out.printf("Subtotal:\t\t\t₹%.2f%n", subtotal);
+        System.out.printf("Service Tax (10%%):\t\t₹%.2f%n", serviceTax);
+        System.out.printf("GST (5%%):\t\t\t₹%.2f%n", gst);
+        System.out.printf("Total:\t\t\t\t₹%.2f%n", total);
+
+        System.out.println("\nThank you for dining with us!");
+        scanner.close();
+    }
+
+    // Helper method to find the index of an item in the menu
+    private static int getItemIndex(String item, String[] menuItems) {
+        for (int i = 0; i < menuItems.length; i++) {
+            if (menuItems[i].equalsIgnoreCase(item)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+}
